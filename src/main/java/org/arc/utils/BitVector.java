@@ -12,4 +12,8 @@ public class BitVector {
 
     public BitVector() {}
 
+    public void unsafeClear(int index) {
+        words[index >>> 6] &= ~(1L << index);
+    }
+
 }

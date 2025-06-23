@@ -22,7 +22,7 @@ public final class Entity {
 
     private final World world;
 
-    private Entity(int id, World world) {
+    public Entity(int id, World world) {
         this.id = id;
         this.world = world;
     }
