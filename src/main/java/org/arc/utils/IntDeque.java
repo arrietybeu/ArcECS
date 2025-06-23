@@ -3,214 +3,236 @@ package org.arc.utils;
 import java.util.Arrays;
 
 /**
+ * A resizable double-ended queue of integers optimized for ECS operations.
+ * Provides efficient add/remove operations at both ends.
+ * 
  * @author Arriety
  */
 public class IntDeque {
-
+    
     private int[] elements;
-    private int beginIndex;
-    protected int size = 0;
-
+    private int head = 0;
+    private int tail = 0;
+    private int size = 0;
+    
     /**
-     * Constructs an empty Bag with an initial capacity of 64.
+     * Creates a new deque with default initial capacity.
      */
     public IntDeque() {
-        this(64);
+        this(16);
     }
-
+    
     /**
-     * Constructs an empty Bag with the specified initial capacity.
-     *
-     * @param capacity the initial capacity of Bag
+     * Creates a new deque with the specified initial capacity.
+     * @param capacity the initial capacity
      */
     public IntDeque(int capacity) {
         elements = new int[capacity];
     }
-
+    
     /**
-     * Check if bag contains this element.
-     *
-     * @param e element to check
-     * @return {@code true} if the bag contains this element
+     * Adds an element to the front of the deque.
+     * @param element the element to add
      */
-    public boolean contains(int e) {
-        for (int i = 0; size > i; i++) {
-            if (e == elements[index(i)]) {
+    public void addFirst(int element) {
+        if (size == elements.length) {
+            grow();
+        }
+        
+        head = (head - 1 + elements.length) % elements.length;
+        elements[head] = element;
+        size++;
+    }
+    
+    /**
+     * Adds an element to the back of the deque.
+     * @param element the element to add
+     */
+    public void addLast(int element) {
+        if (size == elements.length) {
+            grow();
+        }
+        
+        elements[tail] = element;
+        tail = (tail + 1) % elements.length;
+        size++;
+    }
+    
+    /**
+     * Removes and returns the first element.
+     * @return the first element
+     * @throws IllegalStateException if the deque is empty
+     */
+    public int removeFirst() {
+        if (size == 0) {
+            throw new IllegalStateException("Deque is empty");
+        }
+        
+        int element = elements[head];
+        head = (head + 1) % elements.length;
+        size--;
+        return element;
+    }
+    
+    /**
+     * Removes and returns the last element.
+     * @return the last element
+     * @throws IllegalStateException if the deque is empty
+     */
+    public int removeLast() {
+        if (size == 0) {
+            throw new IllegalStateException("Deque is empty");
+        }
+        
+        tail = (tail - 1 + elements.length) % elements.length;
+        int element = elements[tail];
+        size--;
+        return element;
+    }
+    
+    /**
+     * Gets the first element without removing it.
+     * @return the first element
+     * @throws IllegalStateException if the deque is empty
+     */
+    public int peekFirst() {
+        if (size == 0) {
+            throw new IllegalStateException("Deque is empty");
+        }
+        return elements[head];
+    }
+    
+    /**
+     * Gets the last element without removing it.
+     * @return the last element
+     * @throws IllegalStateException if the deque is empty
+     */
+    public int peekLast() {
+        if (size == 0) {
+            throw new IllegalStateException("Deque is empty");
+        }
+        return elements[(tail - 1 + elements.length) % elements.length];
+    }
+    
+    /**
+     * Removes the first occurrence of the specified element.
+     * @param element the element to remove
+     * @return true if the element was removed, false otherwise
+     */
+    public boolean remove(int element) {
+        for (int i = 0; i < size; i++) {
+            int index = (head + i) % elements.length;
+            if (elements[index] == element) {
+                removeAt(i);
                 return true;
             }
         }
         return false;
     }
-
+    
     /**
-     * Returns the element at the specified position in Bag.
-     *
-     * @param index index of the element to return
-     * @return the element at the specified position in bag
-     * @throws ArrayIndexOutOfBoundsException if the index is out of range
-     *                                        ({@code index < 0 || index >= size()})
+     * Checks if the deque contains the specified element.
+     * @param element the element to check for
+     * @return true if the element is found, false otherwise
      */
-    public int get(int index) {
-        return elements[index(index)];
+    public boolean contains(int element) {
+        for (int i = 0; i < size; i++) {
+            int index = (head + i) % elements.length;
+            if (elements[index] == element) {
+                return true;
+            }
+        }
+        return false;
     }
-
+    
     /**
-     * Returns the number of elements in this bag.
-     *
-     * @return the number of elements in this bag
+     * Gets the number of elements in the deque.
+     * @return the size
      */
     public int size() {
         return size;
     }
-
+    
     /**
-     * Returns the number of elements the bag can hold without growing.
-     *
-     * @return the number of elements the bag can hold without growing
-     */
-    public int getCapacity() {
-        return elements.length;
-    }
-
-    /**
-     * Returns true if this bag contains no elements.
-     *
-     * @return {@code true} if this bag contains no elements
+     * Checks if the deque is empty.
+     * @return true if empty, false otherwise
      */
     public boolean isEmpty() {
         return size == 0;
     }
-
+    
     /**
-     * Adds the specified element to the end of this bag.
-     * <p>
-     * If required, it also increases the capacity of the bag.
-     * </p>
-     *
-     * @param e element to be added to this list
-     */
-    public void add(int e) {
-        if (size == elements.length)
-            grow((elements.length * 7) / 4 + 1);
-
-        elements[index(size++)] = e;
-    }
-
-    private int index(int relativeIndex) {
-        return (beginIndex + relativeIndex) % elements.length;
-    }
-
-    /**
-     * Set element at specified index in the bag.
-     *
-     * @param index position of element
-     * @param e     the element
-     */
-    public void set(int index, int e) {
-        if (index >= elements.length) {
-            grow((index * 7) / 4 + 1);
-        }
-        size = Math.max(size, index + 1);
-        elements[index(index)] = e;
-    }
-
-    /**
-     * Increase the capacity of the bag.
-     *
-     * @param newCapacity new capacity to grow to
-     * @throws ArrayIndexOutOfBoundsException if new capacity is smaller than old
-     */
-    private void grow(int newCapacity) {
-        int[] newElements = new int[newCapacity];
-        for (int i = 0; i < size; i++)
-            newElements[i] = get(i);
-
-        elements = newElements;
-        beginIndex = 0;
-    }
-
-    /**
-     * Check if an item, if added at the given item will fit into the bag.
-     * <p>
-     * If not, the bag capacity will be increased to hold an item at the index.
-     * </p>
-     *
-     * @param index index to check
-     */
-    public void ensureCapacity(int index) {
-        if (index >= elements.length) {
-            grow(index);
-        }
-    }
-
-    /**
-     * Removes all of the elements from this bag.
-     * <p>
-     * The bag will be empty after this call returns.
-     * </p>
+     * Clears all elements from the deque.
      */
     public void clear() {
-        Arrays.fill(elements, 0, size, 0);
+        head = 0;
+        tail = 0;
         size = 0;
-        beginIndex = 0;
     }
-
-    public int popLast() {
-        assertNotEmpty();
-
-        int index = index(--size);
-        int value = elements[index];
-        return value;
-    }
-
-    public int popFirst() {
-        assertNotEmpty();
-
-        int value = elements[beginIndex];
-        beginIndex = (beginIndex + 1) % elements.length;
-        size--;
-        return value;
-    }
-
-
-    private void assertNotEmpty() {
-        if (size == 0)
-            throw new RuntimeException("Deque is empty.");
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        IntDeque other = (IntDeque) o;
-        if (size != other.size) return false;
-
-        for (int i = 0; size > i; i++)
-            if (get(i) != other.get(i)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        for (int i = 0, s = size; s > i; i++) {
-            hash = (127 * hash) + elements[i];
+    
+    /**
+     * Converts the deque to an array.
+     * @return an array containing all elements in order
+     */
+    public int[] toArray() {
+        int[] result = new int[size];
+        for (int i = 0; i < size; i++) {
+            result[i] = elements[(head + i) % elements.length];
         }
-
-        return hash;
+        return result;
     }
-
+    
+    /**
+     * Removes the element at the specified position (relative to head).
+     * @param position the position to remove from
+     */
+    private void removeAt(int position) {
+        if (position < 0 || position >= size) {
+            throw new IndexOutOfBoundsException();
+        }
+        
+        if (position < size / 2) {
+            // Shift elements from the front
+            for (int i = position; i > 0; i--) {
+                int fromIndex = (head + i - 1) % elements.length;
+                int toIndex = (head + i) % elements.length;
+                elements[toIndex] = elements[fromIndex];
+            }
+            head = (head + 1) % elements.length;
+        } else {
+            // Shift elements from the back
+            for (int i = position; i < size - 1; i++) {
+                int fromIndex = (head + i + 1) % elements.length;
+                int toIndex = (head + i) % elements.length;
+                elements[toIndex] = elements[fromIndex];
+            }
+            tail = (tail - 1 + elements.length) % elements.length;
+        }
+        size--;
+    }
+    
+    /**
+     * Grows the deque capacity.
+     */
+    private void grow() {
+        int[] newElements = new int[elements.length * 2];
+        for (int i = 0; i < size; i++) {
+            newElements[i] = elements[(head + i) % elements.length];
+        }
+        elements = newElements;
+        head = 0;
+        tail = size;
+    }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("IntDeque(");
-        for (int i = 0; size > i; i++) {
+        sb.append("IntDeque{size=").append(size).append(", elements=[");
+        for (int i = 0; i < size; i++) {
             if (i > 0) sb.append(", ");
-            sb.append(elements[index(i)]);
+            sb.append(elements[(head + i) % elements.length]);
         }
-        sb.append(')');
+        sb.append("]}");
         return sb.toString();
     }
-}
+} 
