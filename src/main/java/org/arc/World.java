@@ -1,5 +1,6 @@
 package org.arc;
 
+import lombok.Getter;
 import org.arc.manager.ComponentManager;
 import org.arc.manager.EntityManager;
 import org.arc.utils.Bag;
@@ -10,14 +11,51 @@ import org.arc.utils.Bag;
  * 
  * @author Arriety
  */
+@Getter
 public class World {
-    
+
+    /**
+     * -- GETTER --
+     *  Gets the world configuration.
+     *
+     * @return the world configuration
+     */
     private final WorldConfiguration configuration;
+    /**
+     * -- GETTER --
+     *  Gets the entity manager.
+     *
+     * @return the entity manager
+     */
     private final EntityManager entityManager;
+    /**
+     * -- GETTER --
+     *  Gets the component manager.
+     *
+     * @return the component manager
+     */
     private final ComponentManager componentManager;
+    /**
+     * -- GETTER --
+     *  Gets all systems in this world.
+     *
+     * @return a bag containing all systems
+     */
     private final Bag<BaseSystem> systems;
-    
+
+    /**
+     * -- GETTER --
+     *  Checks if the world has been initialized.
+     *
+     * @return true if initialized, false otherwise
+     */
     private boolean initialized = false;
+    /**
+     * -- GETTER --
+     *  Gets the current delta time.
+     *
+     * @return the delta time in seconds
+     */
     private float delta = 0f;
     
     /**
@@ -129,15 +167,7 @@ public class World {
         }
         return null;
     }
-    
-    /**
-     * Gets all systems in this world.
-     * @return a bag containing all systems
-     */
-    public Bag<BaseSystem> getSystems() {
-        return systems;
-    }
-    
+
     /**
      * Initializes the world and all its systems.
      * Must be called before the first update.
@@ -191,47 +221,7 @@ public class World {
         
         initialized = false;
     }
-    
-    /**
-     * Gets the entity manager.
-     * @return the entity manager
-     */
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-    
-    /**
-     * Gets the component manager.
-     * @return the component manager
-     */
-    public ComponentManager getComponentManager() {
-        return componentManager;
-    }
-    
-    /**
-     * Gets the world configuration.
-     * @return the world configuration
-     */
-    public WorldConfiguration getConfiguration() {
-        return configuration;
-    }
-    
-    /**
-     * Gets the current delta time.
-     * @return the delta time in seconds
-     */
-    public float getDelta() {
-        return delta;
-    }
-    
-    /**
-     * Checks if the world has been initialized.
-     * @return true if initialized, false otherwise
-     */
-    public boolean isInitialized() {
-        return initialized;
-    }
-    
+
     /**
      * Gets the number of active entities.
      * @return the active entity count

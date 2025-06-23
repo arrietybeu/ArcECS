@@ -1,6 +1,6 @@
 package org.arc.system;
 
-import org.arc.BaseSystem;
+import org.arc.IteratingSystem;
 import org.arc.Entity;
 import org.arc.component.AILogic;
 import org.arc.component.Health;
@@ -14,7 +14,7 @@ import org.arc.utils.Bag;
  * 
  * @author Arriety
  */
-public class AISystem extends BaseSystem {
+public class AISystem extends IteratingSystem {
     
     public AISystem() {
         require(AILogic.class);
@@ -22,19 +22,12 @@ public class AISystem extends BaseSystem {
     }
     
     @Override
-    protected void onUpdate(float deltaTime) {
+    protected void process(Entity entity, float deltaTime) {
         float currentTime = world.getDelta(); // This should be accumulated time
-        Bag<Entity> entities = world.getAllEntities();
         
-        for (Entity entity : entities) {
-            if (!matches(entity)) {
-                continue;
-            }
-            
-            AILogic ai = entity.getComponent(AILogic.class);
-            if (ai != null) {
-                updateAI(entity, ai, currentTime, deltaTime);
-            }
+        AILogic ai = getComponent(entity, AILogic.class);
+        if (ai != null) {
+            updateAI(entity, ai, currentTime, deltaTime);
         }
     }
     

@@ -1,9 +1,8 @@
 package org.arc.system;
 
-import org.arc.BaseSystem;
+import org.arc.IteratingSystem;
 import org.arc.Entity;
 import org.arc.component.Health;
-import org.arc.utils.Bag;
 
 /**
  * HealthSystem processes entities with Health components.
@@ -11,25 +10,17 @@ import org.arc.utils.Bag;
  * 
  * @author Arriety
  */
-public class HealthSystem extends BaseSystem {
+public class HealthSystem extends IteratingSystem {
     
     public HealthSystem() {
         require(Health.class);
     }
     
     @Override
-    protected void onUpdate(float deltaTime) {
-        Bag<Entity> entities = world.getAllEntities();
-        
-        for (Entity entity : entities) {
-            if (!matches(entity)) {
-                continue;
-            }
-            
-            Health health = entity.getComponent(Health.class);
-            if (health != null) {
-                updateHealth(entity, health, deltaTime);
-            }
+    protected void process(Entity entity, float deltaTime) {
+        Health health = getComponent(entity, Health.class);
+        if (health != null) {
+            updateHealth(entity, health, deltaTime);
         }
     }
     

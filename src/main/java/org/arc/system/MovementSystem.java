@@ -1,10 +1,9 @@
 package org.arc.system;
 
-import org.arc.BaseSystem;
+import org.arc.IteratingSystem;
 import org.arc.Entity;
 import org.arc.component.Movement;
 import org.arc.component.Transform;
-import org.arc.utils.Bag;
 
 /**
  * MovementSystem processes entities with Transform and Movement components.
@@ -12,7 +11,7 @@ import org.arc.utils.Bag;
  * 
  * @author Arriety
  */
-public class MovementSystem extends BaseSystem {
+public class MovementSystem extends IteratingSystem {
     
     private static final float GRAVITY = 980f; // Default gravity in units/second²
     
@@ -22,20 +21,12 @@ public class MovementSystem extends BaseSystem {
     }
     
     @Override
-    protected void onUpdate(float deltaTime) {
-        Bag<Entity> entities = world.getAllEntities();
+    protected void process(Entity entity, float deltaTime) {
+        Transform transform = getComponent(entity, Transform.class);
+        Movement movement = getComponent(entity, Movement.class);
         
-        for (Entity entity : entities) {
-            if (!matches(entity)) {
-                continue;
-            }
-            
-            Transform transform = entity.getComponent(Transform.class);
-            Movement movement = entity.getComponent(Movement.class);
-            
-            if (transform != null && movement != null && movement.canMove()) {
-                updateMovement(transform, movement, deltaTime);
-            }
+        if (transform != null && movement != null && movement.canMove()) {
+            updateMovement(transform, movement, deltaTime);
         }
     }
     
