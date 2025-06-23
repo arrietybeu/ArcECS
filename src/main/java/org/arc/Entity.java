@@ -1,5 +1,7 @@
 package org.arc;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.arc.utils.Bag;
 import org.arc.utils.BitVector;
 
@@ -9,12 +11,50 @@ import org.arc.utils.BitVector;
  * 
  * @author Arriety
  */
+@Getter
 public class Entity {
-    
+
+    /**
+     * -- GETTER --
+     *  Gets the entity's unique ID.
+     *
+     * @return the entity ID
+     */
     private final int id;
+    /**
+     * -- GETTER --
+     *  Gets the world this entity belongs to.
+     *
+     * @return the world
+     */
     private World world;
+    /**
+     * -- GETTER --
+     *  Gets all components on this entity.
+     *
+     * @return a bag containing all components
+     */
     private final Bag<Component> components;
+    /**
+     * -- GETTER --
+     *  Gets the component bits for this entity.
+     *  Used internally by systems for efficient entity matching.
+     *
+     * @return the component bits
+     */
     private final BitVector componentBits;
+    /**
+     * -- SETTER --
+     *  Marks this entity as deleted. Used internally by the framework.
+     *
+     *
+     * -- GETTER --
+     *  Checks if this entity has been deleted.
+     *
+     @param deleted the deletion state
+      * @return true if deleted, false otherwise
+     */
+    @Setter
     private boolean deleted = false;
     
     /**
@@ -36,39 +76,7 @@ public class Entity {
     void setWorld(World world) {
         this.world = world;
     }
-    
-    /**
-     * Gets the entity's unique ID.
-     * @return the entity ID
-     */
-    public int getId() {
-        return id;
-    }
-    
-    /**
-     * Gets the world this entity belongs to.
-     * @return the world
-     */
-    public World getWorld() {
-        return world;
-    }
-    
-    /**
-     * Checks if this entity has been deleted.
-     * @return true if deleted, false otherwise
-     */
-    public boolean isDeleted() {
-        return deleted;
-    }
-    
-    /**
-     * Marks this entity as deleted. Used internally by the framework.
-     * @param deleted the deletion state
-     */
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-    
+
     /**
      * Adds a component to this entity.
      * @param component the component to add
@@ -168,24 +176,7 @@ public class Entity {
     public boolean hasComponent(ComponentType type) {
         return !deleted && componentBits.get(type.getIndex());
     }
-    
-    /**
-     * Gets the component bits for this entity.
-     * Used internally by systems for efficient entity matching.
-     * @return the component bits
-     */
-    public BitVector getComponentBits() {
-        return componentBits;
-    }
-    
-    /**
-     * Gets all components on this entity.
-     * @return a bag containing all components
-     */
-    public Bag<Component> getComponents() {
-        return components;
-    }
-    
+
     /**
      * Deletes this entity from the world.
      */

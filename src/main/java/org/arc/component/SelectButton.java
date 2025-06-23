@@ -1,5 +1,7 @@
 package org.arc.component;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.arc.Component;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,9 +35,43 @@ public class SelectButton extends Component {
     private final ConcurrentHashMap<String, String> buttons;
     private final ConcurrentHashMap<String, ButtonAction> buttonActions;
     private final ConcurrentHashMap<String, Boolean> buttonStates;
+    /**
+     * -- GETTER --
+     *  Checks if interaction is enabled.
+     *
+     *
+     * -- SETTER --
+     *  Sets the interaction enabled state.
+     *
+     @return true if interaction is enabled, false otherwise
+      * @param interactionEnabled the interaction enabled state
+     */
+    @Setter
+    @Getter
     private boolean interactionEnabled = true;
+    /**
+     * -- GETTER --
+     *  Gets the interaction range.
+     *
+     * @return the interaction range
+     */
+    @Getter
     private float interactionRange = 32f;
+    /**
+     * -- GETTER --
+     *  Gets the dialog text shown when interacting with the NPC.
+     *
+     * @return the dialog text
+     */
+    @Getter
     private String dialogText = "";
+    /**
+     * -- GETTER --
+     *  Gets the NPC name.
+     *
+     * @return the NPC name
+     */
+    @Getter
     private String npcName = "";
     
     /**
@@ -137,31 +173,7 @@ public class SelectButton extends Component {
             buttonStates.put(buttonId, enabled);
         }
     }
-    
-    /**
-     * Checks if interaction is enabled.
-     * @return true if interaction is enabled, false otherwise
-     */
-    public boolean isInteractionEnabled() {
-        return interactionEnabled;
-    }
-    
-    /**
-     * Sets the interaction enabled state.
-     * @param interactionEnabled the interaction enabled state
-     */
-    public void setInteractionEnabled(boolean interactionEnabled) {
-        this.interactionEnabled = interactionEnabled;
-    }
-    
-    /**
-     * Gets the interaction range.
-     * @return the interaction range
-     */
-    public float getInteractionRange() {
-        return interactionRange;
-    }
-    
+
     /**
      * Sets the interaction range.
      * @param interactionRange the interaction range
@@ -169,15 +181,7 @@ public class SelectButton extends Component {
     public void setInteractionRange(float interactionRange) {
         this.interactionRange = Math.max(0, interactionRange);
     }
-    
-    /**
-     * Gets the dialog text shown when interacting with the NPC.
-     * @return the dialog text
-     */
-    public String getDialogText() {
-        return dialogText;
-    }
-    
+
     /**
      * Sets the dialog text.
      * @param dialogText the dialog text
@@ -185,15 +189,7 @@ public class SelectButton extends Component {
     public void setDialogText(String dialogText) {
         this.dialogText = dialogText != null ? dialogText : "";
     }
-    
-    /**
-     * Gets the NPC name.
-     * @return the NPC name
-     */
-    public String getNpcName() {
-        return npcName;
-    }
-    
+
     /**
      * Sets the NPC name.
      * @param npcName the NPC name
